@@ -1,21 +1,59 @@
 data "archive_file" "lambda_zip" {
-  type = "zip"
-  source_dir = "${path.module}/javascripts/users/"
+  type        = "zip"
+  source_dir  = "${path.module}/javascripts/users/"
   output_path = "${path.module}/javascripts/users/users.zip"
 }
 
 resource "aws_lambda_function" "lambda_get_user" {
   function_name = "lambda_get_user"
-  runtime = "nodejs20.x"
+  runtime       = "nodejs20.x"
   architectures = ["x86_64"]
-  filename = "${path.module}/javascripts/users/users.zip"
+  filename      = "${path.module}/javascripts/users/users.zip"
   #Update code lambda function
   source_code_hash = data.archive_file.lambda_zip.output_base64sha256
-  role = var.lambda_role
-  handler = "get_user.handler"
+  role             = var.lambda_role
+  handler          = "get_user.handler"
   environment {
     variables = {
-      foo = "bar"
+      foo        = "bar"
+      REGION     = "ap-southeast-1"
+      TABLE_NAME = "KMA-DynamoDB"
+    }
+  }
+}
+
+resource "aws_lambda_function" "lambda_delete_user" {
+  function_name = "lambda_delete_user"
+  runtime       = "nodejs20.x"
+  architectures = ["x86_64"]
+  filename      = "${path.module}/javascripts/users/users.zip"
+  #Update code lambda function
+  source_code_hash = data.archive_file.lambda_zip.output_base64sha256
+  role             = var.lambda_role
+  handler          = "delete_user.handler"
+  environment {
+    variables = {
+      foo        = "bar"
+      REGION     = "ap-southeast-1"
+      TABLE_NAME = "KMA-DynamoDB"
+    }
+  }
+}
+
+resource "aws_lambda_function" "lambda_post_user" {
+  function_name = "lambda_post_user"
+  runtime       = "nodejs20.x"
+  architectures = ["x86_64"]
+  filename      = "${path.module}/javascripts/users/users.zip"
+  #Update code lambda function
+  source_code_hash = data.archive_file.lambda_zip.output_base64sha256
+  role             = var.lambda_sqs_role
+  handler          = "post_user.handler"
+  environment {
+    variables = {
+      foo        = "bar"
+      REGION     = "ap-southeast-1"
+      TABLE_NAME = "KMA-DynamoDB"
     }
   }
 }

@@ -1,5 +1,5 @@
 resource "aws_cognito_user_pool" "cognito_pool_001" {
-  name = "example-user-pool"
+  name = "KMA_cognito"
 
   # Cognito user pool sign-in options
   alias_attributes = ["email", "preferred_username"]
@@ -19,7 +19,7 @@ resource "aws_cognito_user_pool" "cognito_pool_001" {
   }
 
   # Enable MFA
-  mfa_configuration = "OPTIONAL" # Options are "OFF", "ON", or "OPTIONAL"
+  mfa_configuration = "ON" # Options are "OFF", "ON", or "OPTIONAL"
 
   # MFA methods
   software_token_mfa_configuration {
@@ -73,7 +73,7 @@ resource "aws_cognito_user_pool" "cognito_pool_001" {
 }
 
 resource "aws_cognito_user_pool_client" "userpool_client" {
-  name            = "cognito_client"
+  name            = "KMA_client"
   user_pool_id    = aws_cognito_user_pool.cognito_pool_001.id
   generate_secret = false
   explicit_auth_flows = [
@@ -82,11 +82,11 @@ resource "aws_cognito_user_pool_client" "userpool_client" {
     "ALLOW_USER_SRP_AUTH"
   ]
   callback_urls = [
-    "https://yourapp.example.com/callback" # Your application's callback URL
+    "https://yourapp.example.com/callback"
   ]
 
   logout_urls = [
-    "https://yourapp.example.com/logout" # Optional: URL for logging out
+    "https://yourapp.example.com/logout"
   ]
   auth_session_validity = 5
   token_validity_units {
